@@ -1,34 +1,39 @@
-import asyncio
-import json
-import aiofiles
-from database import crear_producto, vender_producto
+from fastapi import FastAPI, HTTPException
+from database import leer_base_datos, obtener_producto
 
-async def ejecutar_venta_segura(codigo, cantidad):
+
+
+# inicializar la app
+app = FastAPI(
+    title="API SENAS SENITAS",
+    description="Mi primera API asíncrona",
+    version="1.0.0"
+)
+
+# nuestra primer endpoint
+@app.get("/")
+async def ruta_principal():
+    return {"mensaje": "¡Bienvenido a mi API rest!"}
+
+@app.get("/estado")
+async def estado_servidor():
+    return {"status": "linea", "servicios": "operativos"}
+
+@app.get("/suma")
+async def sumar():
+    numero1 = 5
+    numero2 = 4
+    resultado = numero1 + numero2
+    return  resultado
+@app.get("/productos")
+async def listar_productos():
+    datos = await leer_base_datos()
+    return{"cantidad": len(datos), "productos": datos}
+@app.get("/productos/{codigo_producto}")
+async def buscar_un_producto(codigo_producto: str):
     try:
-        resultado = await vender_producto(codigo, cantidad)
-        print(f"Venta OK: {resultado}")
-    except KeyError as e:
-        print(f"Error KeyError: {e}")
-    except ValueError as e:
-        print(f"Error ValueError: {e}")
-
-async def prueba_de_estres():
-    async with aiofiles.open("inventario.json", "w", encoding="utf-8") as f:
-        await f.write(json.dumps([], indent=4))
-    
-    await asyncio.gather(
-        crear_producto("M001", "Llanta trasera", 10),
-        crear_producto("M002", "Filtro de aire", 25)
-    )
-    print("Productos creados")
-
-    await asyncio.gather(
-        ejecutar_venta_segura("M001", 2),
-        ejecutar_venta_segura("M001", 6),
-        ejecutar_venta_segura("M001", 20),
-        ejecutar_venta_segura("M999", 1)
-    )
-
-    await asyncio.sleep(3)
-
-asyncio.run(prueba_de_estres())
+        # Para llamar a la función de obtener producto
+        producto = await obtener_producto(codigo_producto)
+        return producto
+    except KeyError:
+        raise HTTPException(status_code=404, detail="El producto solicitado no existe en la BD")
