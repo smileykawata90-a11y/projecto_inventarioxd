@@ -1,12 +1,32 @@
 [
-    {
-        "codigo": "M001",
-        "nombre": "Llanta trasera",
-        "stock": 2
-    },
-    {
-        "codigo": "M002",
-        "nombre": "Filtro de aire",
-        "stock": 25
-    }
+  {
+    "codigo": "M001",
+    "nombre": "Llanta trasera",
+    "categoria": "repuestos",
+    "stock": 2
+  },
+  {
+    "codigo": "M002",
+    "nombre": "Filtro de aire",
+    "categoria": "repuestos",
+    "stock": 25
+  },
+  {
+    "codigo": "A001",
+    "nombre": "Arroz blanco",
+    "categoria": "alimentos",
+    "stock": 1
+  },
+  {
+    "codigo": "A002",
+    "nombre": "Arroz integral",
+    "categoria": "alimentos",
+    "stock": 10
+  },
+  {
+    "codigo": "L001",
+    "nombre": "Jabón líquido",
+    "categoria": "aseo",
+    "stock": 3
+  }
 ]
