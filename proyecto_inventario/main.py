@@ -35,14 +35,14 @@ async def buscar_un_producto(codigo_producto: str):
     except KeyError:
         raise HTTPException(status_code=404, detail="El producto solicitado no existe en la BD")
 
-# --- RETO 3 ENDPOINTS NUEVOS ---
+
 
 @app.get("/categorias")
 async def obtener_categorias():
     datos = await leer_base_datos()
     categorias = set()
     for producto in datos:
-        # .get para que no de error 500 si falta la categoria
+      
         cat = producto.get("categoria")
         if cat:
             categorias.add(cat)
