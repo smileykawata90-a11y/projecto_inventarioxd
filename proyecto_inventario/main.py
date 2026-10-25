@@ -8,7 +8,7 @@ apiRest = FastAPI(
     description="Mi primera API asíncrona",
     version="1.0.0"
 )
-
+#epico
 
 @apiRest.get("/")
 async def ruta_principal():
@@ -86,4 +86,4 @@ async def actualizar_producto(codigo_producto: str, producto_actualizado: Produc
             datos[posicion]["codigo"] = codigo_producto
             await guardar_base_datos(datos)
             return {"mensaje": "Producto actualizado", "producto": datos[posicion]}
-    raise HTTPException(status_code=404, detail="Producto no encontrado")
+    raise HTTPException(status_code=404, detail="Producto no encontrado") 
