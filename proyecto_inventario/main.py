@@ -2,14 +2,14 @@ from fastapi import FastAPI, HTTPException, Request
 from database import leer_base_datos, obtener_producto, guardar_base_datos
 from schemas import ProductoCreate
 
-# Inicializar la aplicación
+
 apiRest = FastAPI(
     title="API inventarios SENA",
     description="Mi primera API asíncrona",
     version="1.0.0"
 )
 
-# 1. Ruta principal
+
 @apiRest.get("/")
 async def ruta_principal():
     return {"mensaje": "¡Bienvenido a mi primera API Rest!"}
@@ -18,13 +18,13 @@ async def ruta_principal():
 async def estado_servidor():
     return {"status": "En línea", "servicios": "Operativos sin ningun invonveniente"}
 
-# 2. Listar todos los productos
+
 @apiRest.get("/productos")
 async def listar_productos():
     datos = await leer_base_datos()
     return {"cantidad": len(datos), "productos": datos}
 
-# 3. RUTA DE CATEGORIAS - RETO 1
+
 @apiRest.get("/categorias")
 async def obtener_categorias():
     datos = await leer_base_datos()
@@ -35,7 +35,7 @@ async def obtener_categorias():
             categorias.add(cat)
     return {"categorias": list(categorias)}
 
-# 4. RUTA DE STOCK CRÍTICO - RETO 2
+
 @apiRest.get("/alertas/stock")
 async def alerta_stock():
     datos = await leer_base_datos()
@@ -45,7 +45,7 @@ async def alerta_stock():
             productos_criticos.append(producto)
     return {"cantidad": len(productos_criticos), "productos": productos_criticos}
 
-# 5. RUTA DE BÚSQUEDA AVANZADA - RETO 3
+
 @apiRest.get("/productos/buscar/{palabra_clave}")
 async def buscar_productos(palabra_clave: str):
     datos = await leer_base_datos()
@@ -55,7 +55,7 @@ async def buscar_productos(palabra_clave: str):
             resultados.append(producto)
     return {"cantidad": len(resultados), "productos": resultados}
 
-# 6. Buscar un producto por código - ESTE VA DE ÚLTIMO
+
 @apiRest.get("/productos/{codigo_producto}")
 async def buscar_un_producto(codigo_producto: str):
     try:
@@ -64,7 +64,7 @@ async def buscar_un_producto(codigo_producto: str):
     except KeyError:
         raise HTTPException(status_code=404, detail="El producto solicitado no existe en la BD.")
 
-# 7. Registrar nuevo producto
+
 @apiRest.post("/productos", status_code=201)
 async def registrar_nuevo_producto(producto: ProductoCreate):
     datos = await leer_base_datos()
@@ -76,7 +76,7 @@ async def registrar_nuevo_producto(producto: ProductoCreate):
     await guardar_base_datos(datos)
     return {"mensaje": "Producto registrado correctamente", "producto": nuevo_producto}
 
-# 8. Actualizar producto
+
 @apiRest.put("/productos/{codigo_producto}")
 async def actualizar_producto(codigo_producto: str, producto_actualizado: ProductoCreate):
     datos = await leer_base_datos()
