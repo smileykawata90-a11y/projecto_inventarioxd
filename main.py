@@ -1,0 +1,10 @@
+from fastapi import FastAPI
+from routers.ordenes import router as router_ordenes
+
+app = FastAPI(
+    title="API DE REPARACION DE MOTOS ASI BIEN EPICA XD",
+    description="Sistema de triaje y facturación asi bien epica xd ",
+    version="1.0"
+)
+
+app.include_router(router_ordenes)
