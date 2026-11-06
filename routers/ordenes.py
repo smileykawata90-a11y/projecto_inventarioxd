@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Optional
 from schemas import OrdenCreate, OrdenPatch, OrdenUpdate
 from database import leer_base_datos, guardar_base_datos
-
+from deoendencias.dependencias import verficar_api_key
 router = APIRouter(prefix="/ordenes", tags=["Gestionar ordenes"])
 
 @router.get("/")
@@ -13,7 +13,6 @@ async def obtener_ordenes(
 ):
     datos = await leer_base_datos()
 
-   
     if estado:
         datos = [o for o in datos if o["estado"].lower() == estado.lower()]
     
@@ -26,7 +25,7 @@ async def obtener_ordenes(
     return {"total_ordenes": len(datos), "ordenes": datos}
 
 @router.post("/", status_code=201)
-async def crear_orden(orden: OrdenCreate):
+async def crear_orden(orden: OrdenCreate, api_key: str = Depends(verficar_api_key)):
     datos = await leer_base_datos()
     
     for item in datos:
@@ -43,7 +42,7 @@ async def crear_orden(orden: OrdenCreate):
     datos.append(nueva_orden) 
     await guardar_base_datos(datos)
     
-    return {"mensaje": "Orden creada exitosamente", "orden": nueva_orden}
+    return {"mensaje": "Orden creada exitosamente", "orden": nueva_orden, "llave usada": api_key}
 
 @router.get("/paginadas")
 async def obtener_ordenes_paginadas(

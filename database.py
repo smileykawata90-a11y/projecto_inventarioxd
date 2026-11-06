@@ -80,3 +80,19 @@ async def vender_producto(codigo, cantidad_vendida):
         if producto["stock"] < 3:
             asyncio.create_task(alerta_stock_bajo(codigo, producto["nombre"], producto["stock"]))
         return {"mensaje": "Venta exitosa", "producto": producto["nombre"], "stock_restante": producto["stock"]}
+
+# --- NUEVO PARA MECANICOS ---
+
+ARCHIVO_MECANICOS = "mecanicos.json"
+
+async def leer_mecanicos():
+    try:
+        async with aiofiles.open(ARCHIVO_MECANICOS, mode="r", encoding="utf-8") as f:
+            contenido = await f.read()
+            return json.loads(contenido) if contenido else []
+    except FileNotFoundError:
+        return []
+
+async def guardar_mecanicos(datos):
+    async with aiofiles.open(ARCHIVO_MECANICOS, mode="w", encoding="utf-8") as f:
+        await f.write(json.dumps(datos, indent=4))

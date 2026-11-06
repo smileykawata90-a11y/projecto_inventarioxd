@@ -6,7 +6,6 @@ class OrdenCreate(BaseModel):
     modelo: str = Field(..., description="Marca y modelo. Ej: Bajaj Dominar 400")
     falla_reportada: str = Field(..., description="Descripción del problema por el cliente")
 
-
 class OrdenUpdate(BaseModel):
     nuevo_estado: str = Field(..., description="Ej: En diagnóstico, Reparada, Entregada")
     costo_reparacion: float = Field(..., ge=0, description="Debe ser 0 o mayor")
@@ -15,7 +14,6 @@ class OrdenUpdate(BaseModel):
     def validar_costo_reparacion(self):
         if self.nuevo_estado == "Reparada" and self.costo_reparacion == 0:
             raise ValueError("No se puede marcar como reparada sin asignar un costo de reparación mayor a cero.")
-
         self.nuevo_estado = self.nuevo_estado.capitalize()
         return self
     
@@ -23,3 +21,10 @@ class OrdenPatch(BaseModel):
     nuevo_estado: Optional[str] = Field(None, description="Ej: En diagnóstico, Reparada, Entregada")
     costo_reparacion: Optional[float] = Field(None, ge=0)
     falla_reportada: Optional[str] = None
+
+
+
+class MecanicoCreate(BaseModel):
+    nombre: str = Field(..., description="Nombre del mecánico")
+    especialidad: str = Field(..., description="Ej: Frenos, Motor, Eléctrica")
+    salario: float = Field(..., ge=0, description="Salario debe ser 0 o mayor")

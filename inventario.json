@@ -1,30 +1,37 @@
 [
-  {
-    "placa": "ABC123",
-    "modelo": "Bajaj Pulsar",
-    "propietario": "Juan",
-    "estado": "En diagnóstico",
-    "costo_reparacion": 50000
-  },
-  {
-    "placa": "XYZ987",
-    "modelo": "Bajaj Boxer",
-    "propietario": "Maria",
-    "estado": "Reparada",
-    "costo_reparacion": 150000
-  },
-  {
-    "placa": "MNO456",
-    "modelo": "Yamaha FZ",
-    "propietario": "Pedro",
-    "estado": "Entregada",
-    "costo_reparacion": 200000
-  },
-  {
-    "placa": "QRS789",
-    "modelo": "Bajaj Discover",
-    "propietario": "Ana",
-    "estado": "En diagnóstico",
-    "costo_reparacion": 8000
-  }
+    {
+        "placa": "ABC123",
+        "modelo": "Bajaj Pulsar",
+        "propietario": "Juan",
+        "estado": "En diagn\u00f3stico",
+        "costo_reparacion": 50000
+    },
+    {
+        "placa": "XYZ987",
+        "modelo": "Bajaj Boxer",
+        "propietario": "Maria",
+        "estado": "Reparada",
+        "costo_reparacion": 150000
+    },
+    {
+        "placa": "MNO456",
+        "modelo": "Yamaha FZ",
+        "propietario": "Pedro",
+        "estado": "Entregada",
+        "costo_reparacion": 200000
+    },
+    {
+        "placa": "QRS789",
+        "modelo": "Bajaj Discover",
+        "propietario": "Ana",
+        "estado": "En diagn\u00f3stico",
+        "costo_reparacion": 8000
+    },
+    {
+        "placa": "string",
+        "modelo": "string",
+        "falla_reportada": "string",
+        "estado": "En diagn\u00f3stico",
+        "costo_reparacion": 0.0
+    }
 ]
