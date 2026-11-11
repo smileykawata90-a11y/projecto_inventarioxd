@@ -1,18 +1,23 @@
-from fastapi import FastAPI, Depends
-from routers.ordenes import router as router_ordenes
-from routers.mecanicos import router as router_mecanicos
-from deoendencias.dependencias import simular_base_datos
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from core.database import engine, Base
+from models.orden import Orden
+from models.mecanico import Mecanico
+from models.repuesto import Repuesto
+from routers import ordenes, mecanicos, repuestos
 
-app = FastAPI(
-    title="API DE REPARACION DE MOTOS ASI BIEN EPICA XD",
-    description="Sistema de triaje y facturación asi bien epica xd ",
-    version="1.0"
-)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
 
-app.include_router(router_ordenes)
-app.include_router(router_mecanicos)
+app = FastAPI(title="Taller de Motos API", lifespan=lifespan)
 
-@app.get("/prueba-yield")
-async def probar_yield(conexion=Depends(simular_base_datos)):
-    print("2. [RUTA] Ejecutando la ruta. Estado: Conexión simulada")
-    return {"mensaje": "Conexión simulada", "conexion": conexion}
+app.include_router(ordenes.router)
+app.include_router(mecanicos.router)
+app.include_router(repuestos.router)
+
+@app.get("/")
+async def root():
+    return {"mensaje": "API del Taller de Motos funcionando"}

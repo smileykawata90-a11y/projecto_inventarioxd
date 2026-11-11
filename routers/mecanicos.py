@@ -1,41 +1,49 @@
 from fastapi import APIRouter, Depends, HTTPException
-from schemas import MecanicoCreate
-from deoendencias.dependencias import verificar_gerente, verificar_auditor, parametros_paginacion
-from database import leer_mecanicos, guardar_mecanicos
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from schemas.schemas import MecanicoCreate, MecanicoResponse
+from models.mecanico import Mecanico
+from dependencias.dependencias import obtener_bd, verificar_gerente, verificar_auditor, parametros_paginacion
 
 router = APIRouter(prefix="/mecanicos", tags=["Mecanicos"])
 
-@router.get("/")
+@router.get("/", response_model=list[MecanicoResponse])
 async def obtener_mecanicos(
+    db: AsyncSession = Depends(obtener_bd),
     paginacion: dict = Depends(parametros_paginacion),
     rol: str = Depends(verificar_auditor)
 ):
-    datos = await leer_mecanicos()
-    skip = paginacion["skip"]
-    limit = paginacion["limit"]
-    datos_paginados = datos[skip : skip + limit]
-    return {"total_mecanicos": len(datos), "mecanicos": datos_paginados}
+    query = select(Mecanico).offset(paginacion["skip"]).limit(paginacion["limit"])
+    resultado = await db.execute(query)
+    return resultado.scalars().all()
 
 @router.post("/", status_code=201)
 async def crear_mecanico(
     mecanico: MecanicoCreate,
+    db: AsyncSession = Depends(obtener_bd),
     rol: str = Depends(verificar_gerente)
 ):
-    datos = await leer_mecanicos()
-    nuevo_id = max([m["id"] for m in datos], default=0) + 1
-    nuevo = {"id": nuevo_id, **mecanico.model_dump()}
-    datos.append(nuevo)
-    await guardar_mecanicos(datos)
+    # Verificar documento duplicado
+    existe = await db.execute(select(Mecanico).where(Mecanico.documento == mecanico.documento))
+    if existe.scalars().first():
+        raise HTTPException(status_code=400, detail="Documento ya registrado")
+
+    nuevo = Mecanico(**mecanico.model_dump())
+    db.add(nuevo)
+    await db.commit()
+    await db.refresh(nuevo)
     return {"mensaje": "Mecánico creado exitosamente", "mecanico": nuevo}
 
 @router.delete("/{id}")
 async def eliminar_mecanico(
     id: int,
+    db: AsyncSession = Depends(obtener_bd),
     rol: str = Depends(verificar_gerente)
 ):
-    datos = await leer_mecanicos()
-    datos_filtrados = [m for m in datos if m["id"] != id]
-    if len(datos) == len(datos_filtrados):
+    resultado = await db.execute(select(Mecanico).where(Mecanico.id == id))
+    mecanico_db = resultado.scalars().first()
+    if not mecanico_db:
         raise HTTPException(status_code=404, detail="Mecánico no encontrado")
-    await guardar_mecanicos(datos_filtrados)
+    await db.delete(mecanico_db)
+    await db.commit()
     return {"mensaje": f"Mecánico {id} eliminado"}
